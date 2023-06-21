@@ -12,8 +12,8 @@ int buzzerStatus = 0;
 const int relayPin = D7;
 int relayStatus = 0;
 
-const char *ssid = "Galaxy A514696";
-const char *password = "nyambung";
+const char *ssid = "JTI-POLINEMA";
+const char *password = "jtifast!";
 const char *mqtt_server = "broker.hivemq.com";
 
 WiFiClient espClient;
@@ -113,7 +113,7 @@ void loop()
     lcd.print(jarak);
     lcd.print("cm");
 
-    if (jarak > 1)
+    if (jarak > 3)
     {
       Serial.print(jarak);
       Serial.println(" cm");
@@ -141,7 +141,7 @@ void loop()
       lcd.print("Yah pompa mati");
     }
 
-    if (jarak < 5 && jarak > 1)
+    if (jarak < 5 && jarak > 3)
     {
       Serial.print(jarak);
       Serial.println(" cm");
@@ -155,5 +155,18 @@ void loop()
       lcd.print("Yey pompa nyala");
       digitalWrite(buzzerPin, HIGH);
     }
+    static char Relay[7];
+    dtostrf(relayStatus, 4, 2, Relay);
+    relayStatus = analogRead(relayPin);
+    client.publish("waterlvl/relay", Relay);
+
+    static char Buzzer[7];
+    dtostrf(buzzerStatus, 4, 2, Buzzer);
+    buzzerStatus = analogRead(buzzerPin);
+    client.publish("waterlvl/buzzer", Buzzer);
+
+    static char Water[7];
+    dtostrf(jarak, 4, 2, Water);
+    client.publish("waterlvl/wtr-lvl-indicator", Water);
   }
 }
